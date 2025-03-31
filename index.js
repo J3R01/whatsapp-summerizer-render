@@ -29,11 +29,12 @@ client.on("qr", async (qr) => {
 
   // Generate a PNG-based QR code and save it as a file
   const qrCodePath = path.join(__dirname, "qr-code.png");
-  const qrCodeImage = await qrcode.toDataURL(qr);
   await qrcode.toFile(qrCodePath, qr);
 
-  // Serve the QR code as a static file
-  app.use('/qr', express.static(qrCodePath));
+  // Serve the QR code file when the /qr route is accessed
+  app.get('/qr', (req, res) => {
+    res.sendFile(qrCodePath);
+  });
 
   const renderUrl = process.env.RENDER_EXTERNAL_URL || "http://localhost:3000";
   console.log(`QR code is available at ${renderUrl}/qr`);
