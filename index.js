@@ -16,6 +16,14 @@ app.listen(3000, () => {
   console.log(`QR code will be available at ${renderUrl}/qr`);
 });
 
+const client = new Client({
+  authStrategy: new LocalAuth({ dataPath: "./.wwebjs_auth" }),
+  puppeteer: {
+    headless: true,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+  },
+}); // Ensure client is defined here
+
 client.on("qr", async (qr) => {
   console.log("📲 Generating QR code for browser...");
 
