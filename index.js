@@ -1,6 +1,6 @@
 // index.js - WhatsApp summarizer bot with Gemini via OpenRouter (Render-ready)
 const fs = require("fs");
-const qrcode = require("qrcode-terminal");
+const qrcode = require("qrcode"); // Ensure this is the correct package for PNG QR codes
 const { Client, LocalAuth } = require("whatsapp-web.js");
 const axios = require("axios");
 const express = require("express");
@@ -20,15 +20,23 @@ const client = new Client({
 });
 
 client.on("qr", async (qr) => {
-  console.log("📲 Scan this QR code:");
-  qrcode.generate(qr, { small: true }, (qrCode) => {
-    console.log(qrCode);
+  console.log("📲 Scan this QR code in the browser:");
+
+  // Generate a PNG-based QR code
+  const qrCodeImage = await qrcode.toDataURL(qr);
+
+  // Serve the QR code as an image
+  app.get('/qr', (req, res) => {
+    res.send(`
+      <html>
+        <body>
+          <h1>Scan the QR Code</h1>
+          <img src="${qrCodeImage}" alt="QR Code" />
+        </body>
+      </html>
+    `);
   });
 
-  const qrCodeImage = await qrcodeImage.toDataURL(qr);
-  app.get('/qr', (req, res) => {
-    res.send(`<img src="${qrCodeImage}" alt="QR Code" />`);
-  });
   console.log('QR code is available at http://localhost:3000/qr');
 });
 
