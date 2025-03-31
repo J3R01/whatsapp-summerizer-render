@@ -31,6 +31,7 @@ const client = new Client({
   puppeteer: {
     headless: true,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    executablePath: "/usr/bin/google-chrome-stable", // Explicitly set the Chromium path
   },
 }); // Ensure client is defined here
 
@@ -44,51 +45,64 @@ client.on("qr", async (qr) => {
   const renderUrl = process.env.RENDER_EXTERNAL_URL || "http://localhost:3000";
   console.log(`QR code is available at ${renderUrl}/qr`);
 });
-
-client.on("ready", async () => {
-  console.log("✅ WhatsApp client is ready.");
+ {
+client.on("ready", async () => {fully!");
+  console.log("✅ WhatsApp client is ready.");});
 
   const CHAT_NAME = "Tech Stocks";
-  const chats = await client.getChats();
-  const targetChat = chats.find((c) => c.name === CHAT_NAME);
+  console.error("❌ Authentication failed:", msg);
+});E);
   if (!targetChat) return console.log("❌ Chat not found");
 
-  const messages = await targetChat.fetchMessages({ limit: 50 });
+  console.error("❌ Client disconnected:", reason);
   const messageBodies = messages.map((m) => m.body).filter(Boolean);
   if (messageBodies.length === 0) return console.log("⚠️ No messages to summarize");
 
+  const summary = await summarizeWithGemini(messageBodies.join("\n"));  console.log("✅ WhatsApp client is ready.");
+
+  // Post to Discord webhook
+  await fetch(process.env.DISCORD_WEBHOOK_URL, {it client.getChats();
+    method: "POST",AT_NAME);
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ content: `📈 Summary for *${CHAT_NAME}*:\n\n${summary}` })
+  });onst messages = await targetChat.fetchMessages({ limit: 50 });
+  const messageBodies = messages.map((m) => m.body).filter(Boolean);});
+  if (messageBodies.length === 0) return console.log("⚠️ No messages to summarize");
+client.initialize();
   const summary = await summarizeWithGemini(messageBodies.join("\n"));
 
   // Post to Discord webhook
-  await fetch(process.env.DISCORD_WEBHOOK_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ content: `📈 Summary for *${CHAT_NAME}*:\n\n${summary}` })
-  });
-});
-
-client.initialize();
-
-async function summarizeWithGemini(text) {
-  const prompt = `You're analyzing a WhatsApp group chat focused on tech stocks. 
 From the messages below, extract up to 20 concise bullet points summarizing key stock mentions, catalysts, trends, or warnings.
 Avoid small talk. End with: "Market Sentiment: X% Bullish / Y% Bearish".
-Messages:\n\n${text}`;
-
-  try {
+Messages:\n\n${text}`;    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ content: `📈 Summary for *${CHAT_NAME}*:\n\n${summary}` })
+  });
     const res = await axios.post("https://openrouter.ai/api/v1/chat/completions", {
       model: "google/gemini-2.5-pro-exp-03-25:free",
-      messages: [{ role: "user", content: prompt }]
+      messages: [{ role: "user", content: prompt }]nitialize();
     }, {
       headers: {
-        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
-        "Content-Type": "application/json"
-      }
+        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,App group chat focused on tech stocks. 
+        "Content-Type": "application/json"e messages below, extract up to 20 concise bullet points summarizing key stock mentions, catalysts, trends, or warnings.
+      }mall talk. End with: "Market Sentiment: X% Bullish / Y% Bearish".
     });
-    return res.data.choices[0].message.content;
+ta.choices[0].message.content;
   } catch (err) {
-    const fallbackError = (err.response && err.response.data) ? JSON.stringify(err.response.data) : err.message;
-    console.error("❌ Gemini summarization failed:", fallbackError);
-    return "Summary failed.";
-  }
-}
+    const fallbackError = (err.response && err.response.data) ? JSON.stringify(err.response.data) : err.message;/completions", {
+    console.error("❌ Gemini summarization failed:", fallbackError);.5-pro-exp-03-25:free",
+      messages: [{ role: "user", content: prompt }] return "Summary failed.";
+  }   }, {
+}      headers: {
+
+
+
+
+
+
+
+
+
+
+
+
+}  }    return "Summary failed.";    console.error("❌ Gemini summarization failed:", fallbackError);    const fallbackError = (err.response && err.response.data) ? JSON.stringify(err.response.data) : err.message;  } catch (err) {    return res.data.choices[0].message.content;    });      }        "Content-Type": "application/json"        "Authorization": `Bearer ${process.env.OPENROUTER_API_KEY}`,
