@@ -16,6 +16,16 @@ app.listen(3000, () => {
   console.log(`QR code will be available at ${renderUrl}/qr`);
 });
 
+let qrCodePath = null; // Variable to store the QR code file path
+
+app.get('/qr', (req, res) => {
+  if (qrCodePath && fs.existsSync(qrCodePath)) {
+    res.sendFile(qrCodePath);
+  } else {
+    res.status(404).send("QR code not generated yet. Please wait and refresh.");
+  }
+});
+
 const client = new Client({
   authStrategy: new LocalAuth({ dataPath: "./.wwebjs_auth" }),
   puppeteer: {
@@ -28,13 +38,8 @@ client.on("qr", async (qr) => {
   console.log("📲 Generating QR code for browser...");
 
   // Generate a PNG-based QR code and save it as a file
-  const qrCodePath = path.join(__dirname, "qr-code.png");
+  qrCodePath = path.join(__dirname, "qr-code.png");
   await qrcode.toFile(qrCodePath, qr);
-
-  // Serve the QR code file when the /qr route is accessed
-  app.get('/qr', (req, res) => {
-    res.sendFile(qrCodePath);
-  });
 
   const renderUrl = process.env.RENDER_EXTERNAL_URL || "http://localhost:3000";
   console.log(`QR code is available at ${renderUrl}/qr`);
