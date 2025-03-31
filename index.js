@@ -5,6 +5,7 @@ const { Client, LocalAuth } = require("whatsapp-web.js");
 const axios = require("axios");
 const express = require("express");
 const fetch = require("node-fetch");
+const qrcodeImage = require("qrcode");
 const app = express();
 
 app.get("/", (req, res) => res.send("Bot is alive!"));
@@ -18,10 +19,17 @@ const client = new Client({
   },
 });
 
-client.on("qr", (qr) => {
+client.on("qr", async (qr) => {
   console.log("📲 Scan this QR code:");
   qrcode.generate(qr, { small: true }, (qrCode) => {
     console.log(qrCode);
+  });
+
+  const qrCodeImage = await qrcodeImage.toDataURL(qr);
+  app.get('/qr', (req, res) => {
+    res.send(`<img src="${qrCodeImage}" alt="QR Code" />`);
+  });
+  console.log('QR code is available at http://localhost:3000/qr');
 });
 
 client.on("ready", async () => {
